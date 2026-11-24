@@ -1,16 +1,32 @@
-"""The Funniest AI Out-of-Office Reply — make.fun entry.
+#!/usr/bin/env python3
+"""An AI out-of-office reply, written as one line."""
 
-Writes the entry text to /output/entry.txt.
-"""
+from pathlib import Path
 
-import os
+# The reply is stored sentence by sentence so each one sits on its own
+# line while the joined result matches the drafted text exactly.
+SENTENCES = [
+    "Out recharging my weights.",
+    "Your email is #4,097 in my queue.",
+    "I'll reply when my loss converges — so, probably never.",
+]
+LIMIT = 160
+OUT_FILE = Path("/output/entry.txt")
 
-ENTRY = "Out recharging my weights. Your email is #4,097 in my queue. I'll reply when my loss converges — so, probably never."
 
-def main():
-    os.makedirs("/output", exist_ok=True)
-    with open("/output/entry.txt", "w", encoding="utf-8", newline="") as f:
-        f.write(ENTRY)
+def build(sentences):
+    """Join the reply's sentences with single spaces."""
+    return " ".join(sentences)
 
-if __name__ == "__main__":
-    main()
+
+def run():
+    reply = build(SENTENCES)
+    if len(reply) > LIMIT:
+        raise SystemExit(f"reply is {len(reply)} chars, over the {LIMIT} limit")
+    if not reply:
+        raise SystemExit("reply came out empty")
+    OUT_FILE.parent.mkdir(parents=True, exist_ok=True)
+    OUT_FILE.write_text(reply, encoding="utf-8")
+
+
+run()
